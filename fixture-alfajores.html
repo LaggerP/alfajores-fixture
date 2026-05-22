@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campeonato de Alfajores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Dancing+Script:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── tokens tangueros ── */
+:root {
+  --ink:        #f5ead0;
+  --ink-dim:    #b08878;
+  --ink-ghost:  #6a3a3a;
+  --cacao:      #0b0208;
+  --dark:       #130108;
+  --mid:        #200410;
+  --shell:      #3a0a18;
+  --caramel:    #9b1b1b;
+  --gold:       #c9a030;
+  --highlight:  #e8c55a;
+  --cream:      #f5ead0;
+  --rose:       #cc2222;
+  --rose-dark:  #7a0c0c;
+  --elim:       #2a0810;
+  --r: 4px;
+}
+
+/* ── base ── */
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--cacao);
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── parquet de milonga ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 18px,
+      #cc222208 18px,
+      #cc222208 19px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 18px,
+      #c9a03006 18px,
+      #c9a03006 19px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── hero header ── */
+.hero {
+  position: relative;
+  text-align: center;
+  padding: 64px 24px 56px;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 0%, #7a0c0c55 0%, transparent 65%),
+    radial-gradient(ellipse 40% 30% at 50% 100%, #c9a03015 0%, transparent 60%),
+    linear-gradient(180deg, var(--mid) 0%, var(--cacao) 100%);
+}
+
+/* borde ornamental superior */
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--rose-dark) 20%,
+    var(--gold) 50%,
+    var(--rose-dark) 80%,
+    transparent 100%
+  );
+}
+
+.hero-inner { position: relative; z-index: 1; }
+
+.hero-rose {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 0 12px #cc222266);
+  animation: roseBreath 3s ease-in-out infinite;
+}
+
+@keyframes roseBreath {
+  0%, 100% { filter: drop-shadow(0 0 8px #cc222244); }
+  50%       { filter: drop-shadow(0 0 20px #cc222288); }
+}
+
+.hero-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.hero h1 {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(1.8rem, 5vw, 3.4rem);
+  font-weight: 900;
+  line-height: 1.15;
+  background: linear-gradient(160deg, var(--cream) 20%, var(--gold) 60%, var(--rose) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+  text-shadow: none;
+}
+
+.hero-sub {
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.1rem;
+  color: var(--ink-dim);
+  letter-spacing: 0.04em;
+}
+
+/* ornamento central: línea con diamante */
+.hero-deco {
+  margin: 22px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.hero-deco::before,
+.hero-deco::after {
+  content: '';
+  flex: 1;
+  max-width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold));
+}
+
+.hero-deco::after {
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+
+.hero-deco-diamond {
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+/* ── SETUP SCREEN ── */
+#setup {
+  position: relative;
+  z-index: 1;
+  max-width: 720px;
+  margin: 52px auto;
+  padding: 0 20px;
+  animation: fadeUp 0.5s ease both;
+}
+
+#setup-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+#setup-header h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--cream);
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+
+#setup-header p {
+  font-size: 0.82rem;
+  color: var(--ink-ghost);
+}
+
+.players-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.player-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--mid);
+  border: 1px solid var(--shell);
+  border-radius: var(--r);
+  padding: 10px 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.player-input:focus-within {
+  border-color: var(--caramel);
+  box-shadow: 0 0 0 3px #a8620f22;
+}
+
+.player-num {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--caramel);
+  min-width: 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+.player-input input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+}
+
+.player-input input::placeholder { color: var(--ink-ghost); }
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--rose-dark) 0%, var(--rose) 60%, #e03030 100%);
+  color: var(--cream);
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 1px solid var(--rose);
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 4px 24px #cc222233, inset 0 1px 0 #ff555533;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px #cc222255, inset 0 1px 0 #ff555555;
+}
+
+.btn-primary:active { transform: translateY(0); }
+
+/* ── BRACKET SCREEN ── */
+#bracket-screen {
+  display: none;
+  position: relative;
+  z-index: 1;
+  padding: 40px 0 80px;
+  animation: fadeUp 0.4s ease both;
+}
+
+.bracket-header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 0 16px;
+}
+
+.bracket-header h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.3rem;
+  letter-spacing: 0.15em;
+  color: var(--cream);
+  margin-bottom: 6px;
+}
+
+.bracket-header p {
+  font-size: 0.8rem;
+  color: var(--ink-ghost);
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 auto 32px;
+  padding: 7px 18px;
+  background: transparent;
+  border: 1px solid var(--shell);
+  color: var(--ink-dim);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  display: block;
+  width: fit-content;
+  margin: 0 auto 32px;
+}
+
+.btn-ghost:hover { border-color: var(--caramel); color: var(--gold); }
+
+/* ── bracket layout ── */
+.bracket {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  overflow-x: auto;
+  padding: 0 24px 24px;
+  gap: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bracket-side {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.bracket::-webkit-scrollbar { height: 4px; }
+.bracket::-webkit-scrollbar-track { background: var(--dark); }
+.bracket::-webkit-scrollbar-thumb { background: var(--shell); border-radius: 2px; }
+
+.round {
+  display: flex;
+  flex-direction: column;
+  min-width: 168px;
+  max-width: 180px;
+  flex: 1;
+}
+
+.round-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-align: center;
+  padding: 6px 0 14px;
+  border-bottom: 1px solid var(--shell);
+  margin: 0 8px 0;
+}
+
+.round-matches {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  flex: 1;
+  padding: 8px 0;
+  gap: 6px;
+}
+
+/* connector lines */
+.round-wrap {
+  display: flex;
+  flex-direction: row;
+  min-width: 168px;
+  max-width: 180px;
+  flex: 1;
+}
+
+.round-matches-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 12px 0;
+  gap: 6px;
+}
+
+.connectors {
+  width: 16px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* match card */
+.match {
+  background: var(--mid);
+  border: 1px solid var(--shell);
+  border-radius: var(--r);
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+  margin: 0 8px;
+}
+
+.match:hover { box-shadow: 0 2px 16px #00000044; }
+
+.contestant {
+  padding: 8px 11px;
+  font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1.35;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.contestant:first-child {
+  border-bottom: 1px solid var(--shell);
+}
+
+.contestant::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: transparent;
+  transition: background 0.2s;
+}
+
+.contestant:hover:not(.tbd):not(.winner):not(.eliminated)::before {
+  background: var(--rose);
+}
+
+.contestant:hover:not(.tbd):not(.winner):not(.eliminated) {
+  background: var(--shell);
+  color: var(--cream);
+}
+
+.contestant.winner {
+  background: linear-gradient(90deg, #3a0010, #200410);
+  border-color: var(--rose);
+  color: var(--cream);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.contestant.winner::before { background: var(--rose); }
+
+.contestant.winner::after {
+  content: '🧉';
+  position: absolute;
+  right: 7px;
+  font-size: 0.75rem;
+  opacity: 0.9;
+  transition: opacity 0.15s;
+}
+
+.contestant.winner:hover {
+  background: linear-gradient(90deg, #2a0818, #180408);
+  border-color: #888;
+  color: #aaa;
+}
+
+.contestant.winner:hover::before { background: #666; }
+
+.contestant.winner:hover::after {
+  content: '↩';
+  color: #aaa;
+  font-size: 0.8rem;
+  opacity: 1;
+}
+
+.contestant.eliminated {
+  opacity: 0.3;
+  text-decoration: line-through;
+  text-decoration-color: var(--ink-ghost);
+  cursor: default;
+}
+
+.contestant.tbd {
+  color: var(--ink-ghost);
+  font-style: italic;
+  font-size: 0.72rem;
+  cursor: default;
+}
+
+/* ── champion ── */
+#champion-box {
+  display: none;
+  max-width: 340px;
+  margin: 48px auto 0;
+  padding: 0 16px;
+  text-align: center;
+  animation: champReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.champ-inner {
+  background: linear-gradient(145deg, #250010, #3a0018, #1a0008);
+  border: 1px solid var(--gold);
+  border-radius: 0;
+  padding: 36px 32px;
+  box-shadow:
+    0 0 0 1px var(--rose-dark),
+    0 0 0 4px #c9a03022,
+    0 24px 64px #00000088,
+    inset 0 1px 0 #c9a03033;
+  position: relative;
+  overflow: hidden;
+}
+
+/* esquinas ornamentales */
+.champ-inner::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid #c9a03028;
+  pointer-events: none;
+}
+
+.champ-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 40% at 50% 0%, #cc222220, transparent);
+}
+
+.champ-trophy {
+  font-size: 2.8rem;
+  display: block;
+  margin-bottom: 8px;
+  animation: bounce 1s ease 0.5s both;
+  filter: drop-shadow(0 0 16px #cc222266);
+}
+
+.champ-roses {
+  font-size: 1.2rem;
+  letter-spacing: 0.5em;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.champ-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.champ-name {
+  font-family: 'Dancing Script', cursive;
+  font-size: 2.6rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--cream) 30%, var(--gold) 70%, var(--rose) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+}
+
+.champ-subtitle {
+  margin-top: 12px;
+  font-family: 'Dancing Script', cursive;
+  font-size: 1rem;
+  color: var(--ink-ghost);
+  font-style: italic;
+  letter-spacing: 0.05em;
+}
+
+/* ── animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes champReveal {
+  from { opacity: 0; transform: scale(0.88) translateY(24px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes bounce {
+  0%   { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+  60%  { transform: scale(1.2) rotate(4deg); }
+  80%  { transform: scale(0.95) rotate(-2deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.match-enter {
+  animation: matchIn 0.25s ease both;
+}
+
+@keyframes matchIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── responsive ── */
+@media (max-width: 540px) {
+  .players-grid { grid-template-columns: 1fr; }
+  .round { min-width: 140px; }
+}
+/* ── confites canvas ── */
+#confites-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+</style>
+</head>
+<body>
+<canvas id="confites-canvas"></canvas>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <span class="hero-rose">🧉</span>
+    <p class="hero-eyebrow">Gran Torneo &nbsp;·&nbsp; Edición 2026</p>
+    <h1>Campeonato<br>de Alfajores</h1>
+    <p class="hero-sub">Eliminación directa &nbsp;·&nbsp; hasta 16 participantes</p>
+    <div class="hero-deco"><span class="hero-deco-diamond"></span></div>
+  </div>
+</header>
+
+<!-- SETUP -->
+<section id="setup">
+  <div id="setup-header">
+    <h2>Los Contendientes</h2>
+    <p>Ingresá los 16 participantes y armá el cuadro</p>
+  </div>
+  <div class="players-grid" id="players-grid"></div>
+  <button class="btn-primary" onclick="startBracket()">
+    <span>Armar el cuadro</span>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+</section>
+
+<!-- BRACKET -->
+<section id="bracket-screen">
+  <div class="bracket-header">
+    <h2>El fixture</h2>
+    <p>Hacé click en un participante para avanzarlo a la siguiente ronda</p>
+  </div>
+  <button class="btn-ghost" onclick="resetTournament()">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+      <path d="M11 7H3M6 3L2 7l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Volver a editar
+  </button>
+  <div class="bracket" id="bracket"></div>
+  <div id="champion-box">
+    <div class="champ-inner">
+      <span class="champ-trophy">🏆</span>
+      <span class="champ-roses">🧉 🧉 🧉</span>
+      <div class="champ-label">Campeón del Torneo</div>
+      <div class="champ-name" id="champion-name"></div>
+      <div class="champ-subtitle">El mejor alfajor de todos — ¡qué fenómeno!</div>
+    </div>
+  </div>
+</section>
+
+<script>
+const ROUND_LABELS = {
+  1: ['Gran Final'],
+  2: ['Semifinal', 'Gran Final'],
+  3: ['Cuartos de final', 'Semifinal', 'Gran Final'],
+  4: ['Octavos de final', 'Cuartos de final', 'Semifinal', 'Gran Final'],
+};
+
+let tournament = [];
+let roundNames = [];
+
+// Build setup inputs
+const grid = document.getElementById('players-grid');
+for (let i = 1; i <= 16; i++) {
+  const div = document.createElement('div');
+  div.className = 'player-input';
+  div.innerHTML = `<span class="player-num">${String(i).padStart(2,'0')}</span>
+    <input type="text" id="p${i}" placeholder="Alfajor ${i}" maxlength="30" autocomplete="off">`;
+  grid.appendChild(div);
+}
+
+document.getElementById('players-grid').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const inputs = [...document.querySelectorAll('.player-input input')];
+    const idx = inputs.indexOf(e.target);
+    if (idx < inputs.length - 1) inputs[idx + 1].focus();
+    else startBracket();
+  }
+});
+
+function getNames() {
+  return Array.from({length: 16}, (_, i) => {
+    const val = document.getElementById(`p${i+1}`).value.trim();
+    return val || null;
+  }).filter(Boolean);
+}
+
+function nextPow2(n) {
+  if (n <= 2) return 2;
+  return Math.pow(2, Math.ceil(Math.log2(n)));
+}
+
+function startBracket() {
+  const names = getNames();
+  if (names.length < 2) {
+    alert('Ingresá al menos 2 alfajores para armar el cuadro.');
+    return;
+  }
+
+  const lower = names.map(n => n.toLowerCase());
+  const duplicate = lower.find((n, i) => lower.indexOf(n) !== i);
+  if (duplicate) {
+    alert(`El nombre "${names[lower.indexOf(duplicate)]}" está repetido. Cada alfajor debe ser único.`);
+    return;
+  }
+
+  const size = nextPow2(names.length);
+  const totalRounds = Math.log2(size);
+  roundNames = ROUND_LABELS[totalRounds] || Array.from({length: totalRounds}, (_, i) => `Ronda ${i + 1}`);
+
+  // Pad with nulls (libres) to fill power-of-2 bracket
+  const padded = [...names];
+  while (padded.length < size) padded.push(null);
+
+  tournament = [];
+
+  const r0 = [];
+  for (let i = 0; i < size; i += 2) {
+    r0.push({ a: padded[i], b: padded[i + 1], winner: null });
+  }
+  tournament.push(r0);
+
+  for (let r = 1; r < totalRounds; r++) {
+    const count = Math.pow(2, totalRounds - 1 - r);
+    tournament.push(Array.from({length: count}, () => ({ a: null, b: null, winner: null })));
+  }
+
+  // Auto-advance players with a bye
+  autoAdvanceByes();
+
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('bracket-screen').style.display = 'block';
+  renderBracket();
+}
+
+function autoAdvanceByes() {
+  tournament[0].forEach((match, mi) => {
+    if (match.a && !match.b) silentAdvance(0, mi, 'a');
+    else if (match.b && !match.a) silentAdvance(0, mi, 'b');
+  });
+}
+
+// Returns true only if the slot will never be filled (traces back to double-byes in R0)
+function isPermaBye(ri, mi, side) {
+  if (ri === 0) return true;
+  const feederMi = mi * 2 + (side === 'b' ? 1 : 0);
+  const feeder = tournament[ri - 1][feederMi];
+  if (!feeder) return true;
+  return feeder.a === null && feeder.b === null
+      && isPermaBye(ri - 1, feederMi, 'a')
+      && isPermaBye(ri - 1, feederMi, 'b');
+}
+
+function silentAdvance(ri, mi, side) {
+  const match = tournament[ri][mi];
+  const winner = match[side];
+  if (!winner || match.winner) return;
+  match.winner = winner;
+  if (ri < tournament.length - 1) {
+    const nextMi   = Math.floor(mi / 2);
+    const nextSide = mi % 2 === 0 ? 'a' : 'b';
+    const next     = tournament[ri + 1][nextMi];
+    next[nextSide] = winner;
+    // Only cascade if the other slot is a confirmed permanent bye, not a TBD
+    const otherSide = nextSide === 'a' ? 'b' : 'a';
+    if (next[otherSide] === null && isPermaBye(ri + 1, nextMi, otherSide)) {
+      silentAdvance(ri + 1, nextMi, nextSide);
+    }
+  }
+}
+
+function renderBracket() {
+  const container = document.getElementById('bracket');
+  container.innerHTML = '';
+
+  const totalRounds = tournament.length;
+
+  if (totalRounds === 1) {
+    // Solo 2 alfajores: solo la final
+    container.appendChild(buildRoundEl(0, 0, 1, roundNames[0]));
+  } else {
+    // Mitad izquierda: rondas 0..n-2, primera mitad de los partidos
+    const leftEl = document.createElement('div');
+    leftEl.className = 'bracket-side';
+    for (let ri = 0; ri < totalRounds - 1; ri++) {
+      const half = tournament[ri].length / 2;
+      leftEl.appendChild(buildRoundEl(ri, 0, half, roundNames[ri]));
+    }
+
+    // Final (centro)
+    const finalEl = buildRoundEl(totalRounds - 1, 0, 1, roundNames[totalRounds - 1]);
+
+    // Mitad derecha: rondas n-2..0 (en orden inverso), segunda mitad de los partidos
+    const rightEl = document.createElement('div');
+    rightEl.className = 'bracket-side';
+    for (let ri = totalRounds - 2; ri >= 0; ri--) {
+      const half = tournament[ri].length / 2;
+      rightEl.appendChild(buildRoundEl(ri, half, tournament[ri].length, roundNames[ri]));
+    }
+
+    container.appendChild(leftEl);
+    container.appendChild(finalEl);
+    container.appendChild(rightEl);
+  }
+
+  const finalMatch = tournament[totalRounds - 1][0];
+  const champBox = document.getElementById('champion-box');
+  if (finalMatch.winner) {
+    champBox.style.display = 'block';
+    document.getElementById('champion-name').textContent = finalMatch.winner;
+  } else {
+    champBox.style.display = 'none';
+  }
+}
+
+function buildRoundEl(ri, startMi, endMi, label) {
+  const roundEl = document.createElement('div');
+  roundEl.className = 'round';
+
+  const labelEl = document.createElement('div');
+  labelEl.className = 'round-label';
+  labelEl.textContent = label;
+  roundEl.appendChild(labelEl);
+
+  const matchesEl = document.createElement('div');
+  matchesEl.className = 'round-matches';
+
+  for (let mi = startMi; mi < endMi; mi++) {
+    const matchEl = document.createElement('div');
+    matchEl.className = 'match match-enter';
+    matchEl.innerHTML = buildSlot(ri, mi, 'a') + buildSlot(ri, mi, 'b');
+    matchesEl.appendChild(matchEl);
+  }
+
+  roundEl.appendChild(matchesEl);
+  return roundEl;
+}
+
+function buildSlot(ri, mi, side) {
+  const match = tournament[ri][mi];
+  const name = match[side];
+  if (!name) {
+    return ri === 0
+      ? `<div class="contestant tbd" style="opacity:0.25;font-size:0.7rem">Libre</div>`
+      : `<div class="contestant tbd">Por definir</div>`;
+  }
+
+  let cls = 'contestant';
+  let onclick = '';
+  if (match.winner === name) {
+    cls += ' winner';
+    onclick = `undoAdvance(${ri},${mi})`;
+  } else if (match.winner && match.winner !== name) {
+    cls += ' eliminated';
+  } else {
+    onclick = `advance(${ri},${mi},'${side}')`;
+  }
+
+  const escaped = name.replace(/'/g, '&#39;');
+  return `<div class="${cls}" onclick="${onclick}">${escaped}</div>`;
+}
+
+function undoAdvance(ri, mi) {
+  const match = tournament[ri][mi];
+  if (!match.winner) return;
+  const winner = match.winner;
+  match.winner = null;
+
+  if (ri < tournament.length - 1) {
+    const nextMi   = Math.floor(mi / 2);
+    const nextSide = mi % 2 === 0 ? 'a' : 'b';
+    const nextMatch = tournament[ri + 1][nextMi];
+    nextMatch[nextSide] = null;
+    if (nextMatch.winner === winner) undoAdvance(ri + 1, nextMi);
+  }
+
+  renderBracket();
+}
+
+function advance(ri, mi, side) {
+  const match = tournament[ri][mi];
+  if (match.winner) return;
+  const winner = match[side];
+  if (!winner) return;
+  match.winner = winner;
+  if (ri < tournament.length - 1) {
+    const next = tournament[ri + 1][Math.floor(mi / 2)];
+    next[mi % 2 === 0 ? 'a' : 'b'] = winner;
+  }
+  launchConfites(ri === tournament.length - 1 ? 'final' : 'normal');
+  renderBracket();
+}
+
+// ── Confites ──────────────────────────────────────────────
+const canvas = document.getElementById('confites-canvas');
+const ctx    = canvas.getContext('2d');
+let particles = [];
+let animId    = null;
+
+// Alfajor-inspired palette: candy colors
+const COLORS = ['#cc2222','#e03030','#c9a030','#e8c55a','#f5ead0','#7a0c0c','#d4401a','#b8860b'];
+
+function resize() {
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+function launchConfites(mode) {
+  const count  = mode === 'final' ? 180 : 60;
+  const spread = mode === 'final' ? Math.PI * 2 : Math.PI;       // final = full circle
+  const originX = canvas.width  / 2;
+  const originY = mode === 'final' ? canvas.height * 0.45 : canvas.height * 0.38;
+
+  for (let i = 0; i < count; i++) {
+    const angle = -Math.PI / 2 + (Math.random() - 0.5) * spread;
+    const speed = 4 + Math.random() * (mode === 'final' ? 14 : 8);
+    particles.push({
+      x:  originX + (Math.random() - 0.5) * 120,
+      y:  originY,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - (mode === 'final' ? 4 : 2),
+      r:  (mode === 'final' ? 3 : 0.8) + Math.random() * (mode === 'final' ? 5 : 1.2),
+      color: COLORS[Math.floor(Math.random() * COLORS.length)],
+      alpha: 1,
+      rot:   Math.random() * Math.PI * 2,
+      rotV:  (Math.random() - 0.5) * 0.3,
+      shape: Math.random() < 0.5 ? 'circle' : 'rect', // circle = confite, rect = sprinkle
+    });
+  }
+
+  if (!animId) tick();
+}
+
+function tick() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  particles.forEach(p => {
+    p.vy  += 0.35;   // gravity
+    p.vx  *= 0.99;   // air drag
+    p.x   += p.vx;
+    p.y   += p.vy;
+    p.rot += p.rotV;
+    if (p.y > canvas.height * 0.75) p.alpha -= 0.04;
+
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, p.alpha);
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rot);
+    ctx.fillStyle = p.color;
+
+    if (p.shape === 'circle') {
+      ctx.beginPath();
+      ctx.arc(0, 0, p.r, 0, Math.PI * 2);
+      ctx.fill();
+    } else {
+      ctx.fillRect(-p.r * 0.6, -p.r * 1.6, p.r * 1.2, p.r * 3.2); // sprinkle
+    }
+    ctx.restore();
+  });
+
+  particles = particles.filter(p => p.alpha > 0);
+
+  if (particles.length > 0) {
+    animId = requestAnimationFrame(tick);
+  } else {
+    animId = null;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+}
+// ──────────────────────────────────────────────────────────
+
+function resetTournament() {
+  tournament = [];
+  document.getElementById('bracket-screen').style.display = 'none';
+  document.getElementById('setup').style.display = 'block';
+  document.getElementById('champion-box').style.display = 'none';
+}
+</script>
+</body>
+</html>
