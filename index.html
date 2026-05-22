@@ -508,37 +508,118 @@ body::before {
   border: 1px solid var(--gold);
   border-radius: 0;
   padding: 36px 32px;
-  box-shadow:
-    0 0 0 1px var(--rose-dark),
-    0 0 0 4px #c9a03022,
-    0 24px 64px #00000088,
-    inset 0 1px 0 #c9a03033;
   position: relative;
   overflow: hidden;
+  animation: champPulse 4s ease-in-out infinite;
 }
 
-/* esquinas ornamentales */
+/* haz de luz rotante — pinta primero, el contenido queda encima */
+.champ-glow-sweep {
+  position: absolute;
+  width: 220%;
+  height: 220%;
+  top: -60%;
+  left: -60%;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent      0deg,
+    rgba(201,160,48,.07) 18deg,
+    rgba(204, 34, 34,.04) 30deg,
+    transparent     48deg
+  );
+  animation: beamRotate 14s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes beamRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* el contenido flota sobre el haz */
+.champ-content { position: relative; z-index: 1; }
+
+/* pulso multi-fase: rose (33%) → gold (66%) → reposo */
+@keyframes champPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px #5a0a0a,
+      0 0 0 3px #c9a03010,
+      0 0 18px 4px #cc222210,
+      0 0 48px 8px #cc222208,
+      0 32px 80px #000000aa,
+      inset 0 1px 0 #c9a03028,
+      inset 0 -1px 0 #7a0c0c22;
+  }
+  33% {
+    box-shadow:
+      0 0 0 1px #9b1b1b,
+      0 0 0 6px #cc222228,
+      0 0 28px 8px #cc222230,
+      0 0 64px 16px #cc222214,
+      0 32px 80px #000000bb,
+      inset 0 1px 0 #c9a03044,
+      inset 0 -1px 0 #9b1b1b44;
+  }
+  66% {
+    box-shadow:
+      0 0 0 1px #c9a030,
+      0 0 0 5px #c9a03032,
+      0 0 22px 6px #c9a03020,
+      0 0 54px 12px #c9a03010,
+      0 32px 80px #000000bb,
+      inset 0 1px 0 #c9a03066,
+      inset 0 -1px 0 #c9a03033;
+  }
+}
+
+/* marco interior que pulsa con el gold */
 .champ-inner::before {
   content: '';
   position: absolute;
   inset: 6px;
   border: 1px solid #c9a03028;
   pointer-events: none;
+  animation: innerFramePulse 4s ease-in-out infinite;
 }
 
+@keyframes innerFramePulse {
+  0%, 100% { border-color: #c9a03020; }
+  66%       { border-color: #c9a03055; }
+}
+
+/* destello cenital que respira */
 .champ-inner::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 70% 40% at 50% 0%, #cc222220, transparent);
+  background: radial-gradient(ellipse 70% 40% at 50% 0%, #cc222225, transparent);
+  animation: topGlowBreathe 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes topGlowBreathe {
+  0%, 100% { opacity: .5; }
+  33%       { opacity: 1; }
+  66%       { opacity: .7; }
 }
 
 .champ-trophy {
   font-size: 2.8rem;
   display: block;
   margin-bottom: 8px;
-  animation: bounce 1s ease 0.5s both;
-  filter: drop-shadow(0 0 16px #cc222266);
+  animation: bounce 1s ease 0.5s both, trophyFloat 3s ease-in-out 1.6s infinite;
+}
+
+@keyframes trophyFloat {
+  0%, 100% {
+    transform: translateY(0);
+    filter: drop-shadow(0 0 12px #cc222266);
+  }
+  50% {
+    transform: translateY(-6px);
+    filter: drop-shadow(0 0 24px #c9a030aa);
+  }
 }
 
 .champ-roses {
@@ -562,11 +643,18 @@ body::before {
   font-family: 'Dancing Script', cursive;
   font-size: 2.6rem;
   font-weight: 700;
-  background: linear-gradient(135deg, var(--cream) 30%, var(--gold) 70%, var(--rose) 100%);
+  background: linear-gradient(135deg, var(--cream) 20%, var(--gold) 50%, var(--rose) 80%, var(--cream) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  background-size: 250% auto;
   line-height: 1.2;
+  animation: nameShimmer 5s ease-in-out infinite alternate;
+}
+
+@keyframes nameShimmer {
+  from { background-position: 0% center; }
+  to   { background-position: 100% center; }
 }
 
 .champ-subtitle {
@@ -597,19 +685,68 @@ body::before {
 }
 
 .match-enter {
-  animation: matchIn 0.25s ease both;
+  animation: matchIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: var(--stagger-delay, 0ms);
 }
 
 @keyframes matchIn {
-  from { opacity: 0; transform: scale(0.96); }
-  to   { opacity: 1; transform: scale(1); }
+  from { opacity: 0; transform: translateY(10px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
 }
+
+/* shimmer al avanzar ganador */
+@keyframes shimmerFlash {
+  from { background-position: -100% center; }
+  to   { background-position: 250% center; }
+}
+
+.contestant.shimmer-flash::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(201,160,48,.55) 50%,
+    transparent 80%
+  );
+  background-size: 300% 100%;
+  animation: shimmerFlash 0.42s ease forwards;
+  pointer-events: none;
+}
+
+/* tilt 3D: no interferir con otras transforms durante la animación */
+.match { transform-style: flat; will-change: transform; }
 
 /* ── responsive ── */
 @media (max-width: 540px) {
   .players-grid { grid-template-columns: 1fr; }
   .round { min-width: 140px; }
 }
+/* ── curtain ── */
+#curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 8000;
+  display: flex;
+  pointer-events: none;
+}
+
+.curtain-panel {
+  flex: 1;
+  background: linear-gradient(180deg, var(--mid) 0%, var(--dark) 100%);
+  transition: transform 0.55s cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+.curtain-left  { transform: translateX(-100%); border-right: 1px solid var(--shell); }
+.curtain-right { transform: translateX(100%);  border-left:  1px solid var(--shell); }
+
+#curtain.closing { pointer-events: all; }
+#curtain.closing .curtain-left  { transform: translateX(0); }
+#curtain.closing .curtain-right { transform: translateX(0); }
+#curtain.opening .curtain-left  { transform: translateX(-100%); }
+#curtain.opening .curtain-right { transform: translateX(100%);  }
+
 /* ── confites canvas ── */
 #confites-canvas {
   position: fixed;
@@ -617,10 +754,138 @@ body::before {
   pointer-events: none;
   z-index: 9999;
 }
+
+/* ── toast ── */
+#toast {
+  position: fixed;
+  top: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-140%);
+  z-index: 10000;
+  width: min(400px, calc(100vw - 32px));
+  background: linear-gradient(160deg, #200410 0%, #130108 100%);
+  border: 1px solid var(--shell);
+  border-radius: var(--r);
+  overflow: hidden;
+  box-shadow: 0 12px 48px #000000aa, 0 0 0 1px #c9a03018;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  opacity: 0;
+}
+
+/* línea ornamental superior */
+#toast::before {
+  content: '';
+  display: block;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--rose-dark) 20%,
+    var(--gold) 50%,
+    var(--rose-dark) 80%,
+    transparent 100%
+  );
+}
+
+#toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+#toast.hide {
+  transform: translateX(-50%) translateY(-140%);
+  opacity: 0;
+}
+
+.toast-inner {
+  padding: 18px 20px 16px;
+  text-align: center;
+}
+
+.toast-deco {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.toast-deco::before,
+.toast-deco::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--shell));
+}
+
+.toast-deco::after {
+  background: linear-gradient(90deg, var(--shell), transparent);
+}
+
+.toast-diamond {
+  width: 6px;
+  height: 6px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.toast-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.toast-msg {
+  font-size: 0.85rem;
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.toast-close {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  padding: 7px 0;
+  background: transparent;
+  border: none;
+  border-top: 1px solid var(--shell);
+  color: var(--ink-ghost);
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+}
+
+.toast-close:hover {
+  color: var(--cream);
+  background: #ffffff08;
+}
 </style>
 </head>
 <body>
 <canvas id="confites-canvas"></canvas>
+
+<div id="curtain">
+  <div class="curtain-panel curtain-left"></div>
+  <div class="curtain-panel curtain-right"></div>
+</div>
+
+<div id="toast" role="alert" aria-live="assertive">
+  <div class="toast-inner">
+    <div class="toast-title">Atención</div>
+    <div class="toast-deco"><span class="toast-diamond"></span></div>
+    <div class="toast-msg" id="toast-msg"></div>
+    <button class="toast-close" onclick="hideToast()" aria-label="Cerrar">Entendido</button>
+  </div>
+</div>
 
 <!-- HERO -->
 <header class="hero">
@@ -663,11 +928,14 @@ body::before {
   <div class="bracket" id="bracket"></div>
   <div id="champion-box">
     <div class="champ-inner">
-      <span class="champ-trophy">🏆</span>
-      <span class="champ-roses">🧉 🧉 🧉</span>
-      <div class="champ-label">Campeón del Torneo</div>
-      <div class="champ-name" id="champion-name"></div>
-      <div class="champ-subtitle">El mejor alfajor de todos — ¡qué fenómeno!</div>
+      <div class="champ-glow-sweep"></div>
+      <div class="champ-content">
+        <span class="champ-trophy">🏆</span>
+        <span class="champ-roses">🧉 🧉 🧉</span>
+        <div class="champ-label">Campeón del Torneo</div>
+        <div class="champ-name" id="champion-name"></div>
+        <div class="champ-subtitle">El mejor alfajor de todos — ¡qué fenómeno!</div>
+      </div>
     </div>
   </div>
 </section>
@@ -682,6 +950,7 @@ const ROUND_LABELS = {
 
 let tournament = [];
 let roundNames = [];
+let staggerIdx = 0;
 
 // Build setup inputs
 const grid = document.getElementById('players-grid');
@@ -714,17 +983,22 @@ function nextPow2(n) {
   return Math.pow(2, Math.ceil(Math.log2(n)));
 }
 
-function startBracket() {
+async function startBracket() {
   const names = getNames();
   if (names.length < 2) {
-    alert('Ingresá al menos 2 alfajores para armar el cuadro.');
+    showToast('Ingresá al menos 2 alfajores para armar el cuadro.');
+    return;
+  }
+
+  if (names.length % 2 !== 0) {
+    showToast(`Tenés ${names.length} participantes (número impar). Agregá o quitá uno para que todos tengan contrincante.`);
     return;
   }
 
   const lower = names.map(n => n.toLowerCase());
   const duplicate = lower.find((n, i) => lower.indexOf(n) !== i);
   if (duplicate) {
-    alert(`El nombre "${names[lower.indexOf(duplicate)]}" está repetido. Cada alfajor debe ser único.`);
+    showToast(`El nombre "${names[lower.indexOf(duplicate)]}" está repetido. Cada alfajor debe ser único.`);
     return;
   }
 
@@ -749,12 +1023,31 @@ function startBracket() {
     tournament.push(Array.from({length: count}, () => ({ a: null, b: null, winner: null })));
   }
 
-  // Auto-advance players with a bye
   autoAdvanceByes();
 
+  await closeCurtain();
   document.getElementById('setup').style.display = 'none';
   document.getElementById('bracket-screen').style.display = 'block';
   renderBracket();
+  await openCurtain();
+}
+
+function closeCurtain() {
+  return new Promise(resolve => {
+    const curtain = document.getElementById('curtain');
+    curtain.classList.remove('opening');
+    curtain.classList.add('closing');
+    setTimeout(resolve, 580);
+  });
+}
+
+function openCurtain() {
+  return new Promise(resolve => {
+    const curtain = document.getElementById('curtain');
+    curtain.classList.remove('closing');
+    curtain.classList.add('opening');
+    setTimeout(resolve, 600);
+  });
 }
 
 function autoAdvanceByes() {
@@ -794,6 +1087,7 @@ function silentAdvance(ri, mi, side) {
 }
 
 function renderBracket() {
+  staggerIdx = 0;
   const container = document.getElementById('bracket');
   container.innerHTML = '';
 
@@ -852,7 +1146,24 @@ function buildRoundEl(ri, startMi, endMi, label) {
   for (let mi = startMi; mi < endMi; mi++) {
     const matchEl = document.createElement('div');
     matchEl.className = 'match match-enter';
+    matchEl.style.setProperty('--stagger-delay', `${staggerIdx * 55}ms`);
+    staggerIdx++;
     matchEl.innerHTML = buildSlot(ri, mi, 'a') + buildSlot(ri, mi, 'b');
+
+    matchEl.addEventListener('mousemove', e => {
+      const r = matchEl.getBoundingClientRect();
+      const x = (e.clientX - r.left)  / r.width  - 0.5;
+      const y = (e.clientY - r.top)   / r.height - 0.5;
+      matchEl.style.transition = 'transform 0.06s ease';
+      matchEl.style.transform  = `perspective(600px) rotateY(${x * 14}deg) rotateX(${-y * 10}deg) scale(1.03)`;
+      matchEl.style.zIndex = '5';
+    });
+    matchEl.addEventListener('mouseleave', () => {
+      matchEl.style.transition = 'transform 0.4s ease';
+      matchEl.style.transform  = '';
+      matchEl.style.zIndex     = '';
+    });
+
     matchesEl.appendChild(matchEl);
   }
 
@@ -877,7 +1188,7 @@ function buildSlot(ri, mi, side) {
   } else if (match.winner && match.winner !== name) {
     cls += ' eliminated';
   } else {
-    onclick = `advance(${ri},${mi},'${side}')`;
+    onclick = `advance(event,${ri},${mi},'${side}')`;
   }
 
   const escaped = name.replace(/'/g, '&#39;');
@@ -901,18 +1212,21 @@ function undoAdvance(ri, mi) {
   renderBracket();
 }
 
-function advance(ri, mi, side) {
+function advance(e, ri, mi, side) {
   const match = tournament[ri][mi];
   if (match.winner) return;
   const winner = match[side];
   if (!winner) return;
+
+  e.currentTarget.classList.add('shimmer-flash');
+
   match.winner = winner;
   if (ri < tournament.length - 1) {
     const next = tournament[ri + 1][Math.floor(mi / 2)];
     next[mi % 2 === 0 ? 'a' : 'b'] = winner;
   }
   launchConfites(ri === tournament.length - 1 ? 'final' : 'normal');
-  renderBracket();
+  setTimeout(() => renderBracket(), 400);
 }
 
 // ── Confites ──────────────────────────────────────────────
@@ -992,6 +1306,25 @@ function tick() {
     animId = null;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   }
+}
+// ──────────────────────────────────────────────────────────
+
+// ── Toast ─────────────────────────────────────────────────
+let toastTimer = null;
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  toast.classList.remove('hide');
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(hideToast, 4200);
+}
+
+function hideToast() {
+  const toast = document.getElementById('toast');
+  toast.classList.remove('show');
+  toast.classList.add('hide');
 }
 // ──────────────────────────────────────────────────────────
 
